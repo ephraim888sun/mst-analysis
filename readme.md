@@ -4,7 +4,9 @@
 ### What is a minimum spanning tree
 
 minimum - sum of the weights is the least
+
 spanning - reaches all the vertices
+
 tree - no cycle
 
 A Minimum Spanning Tree (MST) is an acyclic tree that connects all vertices of a given graph while minimizing the total sum of edge weights.
