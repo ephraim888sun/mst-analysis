@@ -27,7 +27,9 @@ bool MyGraph::addEdge(int a, int b, float w)
       b = temp;
    }
    if (a > numOfNodes || b > numOfNodes)
+   {
       return false;
+   }
    sortedList.push_back(Link{a, b, w});
    return true;
 }
@@ -113,14 +115,60 @@ vector<Link> Task1(int n, vector<Link>& pipes, MyHelper& helper)
    {
       graph.addEdge(a.v1, a.v2, a.w);
    }
+   helper.numOfNodes = n;
    return graph.findMinimumSpanningTree(helper);
 }
 
-pair<bool, Link> Task2(int n, vector<Link>& pipes, Link newPipe, MyHelper helper)
+pair<bool, Link> Task2(int n, vector<Link> &pipes, Link newPipe, MyHelper helper)
 {
-  Link l1;
-  pair<bool, Link> sol;
-  sol.first = true;
-  sol.second = newPipe;
-  return sol;
+   MyGraph graph;
+   vector<Link> mst;
+   vector<int> parent(helper.numOfNodes + 1, -1);
+   int counter = 0;
+   pair<bool, Link> answer = {false, {-1, -1, -1}};
+   for (const Link &edge : helper.sortedList)
+   {
+      if (answer.first == false && newPipe.w < edge.w)
+      {
+         int rootA = graph.findRoot(parent, newPipe.v1);
+         int rootB = graph.findRoot(parent, newPipe.v2);
+         if (rootA != rootB)
+         {
+            counter++;
+            mst.push_back(newPipe);
+            parent[rootA] = rootB;
+            answer.first = true;
+            if (counter >= helper.numOfNodes - 1)
+            {
+               break;
+            }
+         }
+      }
+      int rootA = graph.findRoot(parent, edge.v1);
+      int rootB = graph.findRoot(parent, edge.v2);
+      if (rootA != rootB)
+      {
+         counter++;
+         mst.push_back(edge);
+         parent[rootA] = rootB;
+         if (counter >= helper.numOfNodes - 1)
+         {
+            break;
+         }
+      }
+   }
+   if (answer.first == false)
+      return answer;
+   // otherwise search the mst for which edge is not in it compared to the new one.
+   // mst is ordered by size
+   int offset = 0;
+   for (int i = 0; i < helper.MST.size(); i++)
+   {
+      if (mst[i] == newPipe)
+         offset++;
+      if (mst[i + offset].w != helper.MST[i].w)
+      {
+         return {true, helper.MST[i]};
+      }
+   }
 }
