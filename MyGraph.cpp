@@ -22,9 +22,7 @@ bool MyGraph::addEdge(int a, int b, float w)
 {
    if (b < a)
    {
-      int temp = a;
-      a = b;
-      b = temp;
+      std::swap(a, b);
    }
    if (a > numOfNodes || b > numOfNodes)
    {
@@ -48,9 +46,7 @@ pair<bool, float> MyGraph::weight(int a, int b)
    pair<bool, float> res = {false, -1};
    if (b < a)
    {
-      int temp = a;
-      a = b;
-      b = temp;
+      std::swap(a, b);
    }
    for (auto node : sortedList)
    {
@@ -92,7 +88,7 @@ vector<Link> MyGraph::findMinimumSpanningTree(MyHelper &mh)
       if (rootA != rootB)
       {
          counter++;
-         mst.push_back(edge);
+         mst.emplace_back(edge);
          parent[rootA] = rootB;
          if (counter >= numOfNodes - 1)
          {
@@ -158,7 +154,9 @@ pair<bool, Link> Task2(int n, vector<Link> &pipes, Link newPipe, MyHelper helper
       }
    }
    if (answer.first == false)
+   {
       return answer;
+   }
    // otherwise search the mst for which edge is not in it compared to the new one.
    // mst is ordered by size
    int offset = 0;
@@ -171,4 +169,6 @@ pair<bool, Link> Task2(int n, vector<Link> &pipes, Link newPipe, MyHelper helper
          return {true, helper.MST[i]};
       }
    }
+   // Add a default return statement
+   return {false, {-1, -1, -1}};
 }
